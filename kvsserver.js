@@ -11,7 +11,7 @@ var mongodb = 'csc130'
 var mongohost = 'localhost'
 var mongoport = 27017
 var mongocollection = 'kvs' 
-var listenport = 44444;
+var listenport = 43234;
 
 var consolelog = true;
 var logfile = 'kvs.log';
@@ -37,7 +37,6 @@ function failedRequest(res) {
 	res.writeHead(500, 'Server Error', {'Content-Type': 'application/json'});
 	res.end('');
 }
-
 
 
 var db = new MongoDb(mongodb, new MongoServer(mongohost, mongoport), {w:-1});

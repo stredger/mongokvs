@@ -33,13 +33,22 @@ function serverlog(msg) {
 		logfd.write(msg);
 }
 
-function failedRequest(res) {
+function failedRequest(res, msg) {
+	msg = msg || '';
 	res.writeHead(500, 'Server Error', {'Content-Type': 'application/json'});
-	res.end('');
+	res.end(msg);
 }
 
+function serverError(res, err) {
+	serverlog('Failed request:' + err.toString());
+	failedRequest(res);
+}
 
-
+function successfulRequest(res, data, logmsg) {
+	serverlog(logmsg);
+	res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
+	res.end(data);
+}
 
 var db = new MongoDb(mongodb, new MongoServer(mongohost, mongoport), {w:-1});
 http.createServer(function(req, res) {
@@ -64,37 +73,34 @@ http.createServer(function(req, res) {
 
 		db.open(function(err, db) {
 
-			if (err) {
-				serverlog('Failed request:' + err.toString());
-				failedRequest(res);
-				return;
-			}
+			if (err) return serverError(res, err);
 
 			var coll = db.collection(mongocollection);
 			if (req.get) {
 				coll.find(mongorequest).toArray(function(err, docs) {
 					if (err) {
-						serverlog('Failed request:' + err.toString());
-						failedRequest(res);
-						return;
+						serverError(res, err);
+					} else {
+						jsondocs = JSON.stringify(docs);
+						successfulRequest(res, jsondocs, 'Query returned: ' + jsondocs);
 					}
-					jsondocs = JSON.stringify(docs);
-					serverlog('Query returned: ' + jsondocs);
-					res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
-					res.end(jsondocs);
 					db.close();
 				});
 			} else { // put
 				var searchObj = {name:mongorequest.name, key:mongorequest.key}
 				coll.update(searchObj, mongorequest, {upsert:true}, function(err, count) {
 					if (err) {
-						serverlog('Failed request:' + err.toString());
-						failedRequest(res);
-						return;
+						serverError(res, err);
+					} else {
+						if (count) {
+							resdata = '{\"updated\":' + count + '}';
+							resmsg = 'updated ' + count;
+						} else {
+							resdata = '{\"inserted\":true}';
+							resmsg = 'inserted ' + JSON.stringify(mongorequest);
+						}
+						successfulRequest(res, resdata, resmsg);
 					}
-					serverlog('Updated: ' + count);
-					res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
-					res.end('{\"updated\":' + count + '}');
 					db.close();
 				});
 			}

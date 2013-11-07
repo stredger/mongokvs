@@ -92,14 +92,8 @@ http.createServer(function(req, res) {
 					if (err) {
 						serverError(res, err);
 					} else {
-						if (count) {
-							resdata = '{\"updated\":' + count + '}';
-							resmsg = 'updated ' + count;
-						} else {
-							resdata = '{\"inserted\":true}';
-							resmsg = 'inserted ' + JSON.stringify(mongorequest);
-						}
-						successfulRequest(res, resdata, resmsg);
+						resmsg = 'inserted ' + JSON.stringify(mongorequest);
+						successfulRequest(res, '{\"inserted\":true}', resmsg);
 					}
 					db.close();
 				});

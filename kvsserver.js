@@ -78,9 +78,10 @@ http.createServer(function(req, res) {
 						failedRequest(res);
 						return;
 					}
-					serverlog('Query returned: ' + docs);
+					jsondocs = JSON.stringify(docs);
+					serverlog('Query returned: ' + jsondocs);
 					res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
-					res.end(docs);
+					res.end(jsondocs);
 					db.close();
 				});
 			} else { // put

@@ -11,7 +11,7 @@ var mongodb = 'csc130'
 var mongohost = 'localhost'
 var mongoport = 27017
 var mongocollection = 'kvs' 
-var listenport = 43234;
+var listenport = 64444;
 
 var consolelog = true;
 var logfile = 'kvs.log';
@@ -22,7 +22,7 @@ if (logfile) {
 }
 
 function timestamp() {
-	return ts(Date.now()).split('GMT')[0];
+	return ts(Date.now()).split('GMT')[0] + '| ';
 }
 
 function serverlog(msg) {
@@ -37,6 +37,8 @@ function failedRequest(res) {
 	res.writeHead(500, 'Server Error', {'Content-Type': 'application/json'});
 	res.end('');
 }
+
+
 
 
 var db = new MongoDb(mongodb, new MongoServer(mongohost, mongoport), {w:-1});
@@ -63,7 +65,7 @@ http.createServer(function(req, res) {
 		db.open(function(err, db) {
 
 			if (err) {
-				serverlog(err);
+				serverlog('Failed request:' + err.toString());
 				failedRequest(res);
 				return;
 			}
@@ -71,8 +73,12 @@ http.createServer(function(req, res) {
 			var coll = db.collection(mongocollection);
 			if (req.get) {
 				coll.find(mongorequest).toArray(function(err, docs) {
-					// check error
-					serverlog(docs);
+					if (err) {
+						serverlog('Failed request:' + err.toString());
+						failedRequest(res);
+						return;
+					}
+					serverlog('Query returned: ' + docs);
 					res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
 					res.end(docs);
 					db.close();
@@ -80,10 +86,14 @@ http.createServer(function(req, res) {
 			} else { // put
 				var searchObj = {name:mongorequest.name, key:mongorequest.key}
 				coll.update(searchObj, mongorequest, {upsert:true}, function(err, count) {
-					// check error
-					serverlog(count);
+					if (err) {
+						serverlog('Failed request:' + err.toString());
+						failedRequest(res);
+						return;
+					}
+					serverlog('Updated: ' + count);
 					res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
-					res.end('{updated:' + count + '}');
+					res.end('{\"updated\":' + count + '}');
 					db.close();
 				});
 			}

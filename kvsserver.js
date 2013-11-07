@@ -8,7 +8,7 @@ var ts = require('ts');
 
 
 var mongodb = 'csc130'
-var mongohost = 'grack04.uvic.trans-cloud.net'
+var mongohost = 'localhost'
 var mongoport = 27017
 var mongocollection = 'kvs' 
 var listenport = 44444;

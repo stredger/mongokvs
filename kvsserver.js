@@ -72,10 +72,10 @@ http.createServer(function(req, res) {
 	});
 	req.on('end', function() {
 
-		if !(postdata)
+		if (!postdata)
 			return badRequest(res, req.url + ' missing resource identifier');
 		serverlog('Got ' + req.url + ' request: ' + postdata);
-		
+
 		var mongorequest = JSON.parse(postdata);
 		db.open(function(err, db) {
 

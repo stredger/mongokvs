@@ -13,7 +13,7 @@ var mongoport = 27017;
 var mongocollection = 'kvs';
 var listenport = 64444;
 
-var consolelog = true;
+var consolelog = false;
 var logfile = 'kvs.log';
 var logfd = null;
 

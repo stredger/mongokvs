@@ -7,10 +7,10 @@ var fs = require('fs');
 var ts = require('ts');
 
 
-var mongodb = 'csc130'
-var mongohost = 'localhost'
-var mongoport = 27017
-var mongocollection = 'kvs' 
+var mongodb = 'csc130';
+var mongohost = 'localhost';
+var mongoport = 27017;
+var mongocollection = 'kvs';
 var listenport = 64444;
 
 var consolelog = true;
@@ -40,14 +40,20 @@ function failedRequest(res, msg) {
 }
 
 function serverError(res, err) {
-	serverlog('Failed request:' + err.toString());
+	serverlog('Failed Request:' + err.toString());
 	failedRequest(res);
 }
 
 function successfulRequest(res, data, logmsg) {
-	serverlog(logmsg);
+	serverlog('Success: ' + logmsg);
 	res.writeHead(200, 'OK', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
 	res.end(data);
+}
+
+function badRequest(res, msg) {
+	serverlog('Bad Request: ' + msg);
+	res.writeHead(400, 'Bad Request', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
+	res.end('');
 }
 
 
@@ -57,10 +63,7 @@ http.createServer(function(req, res) {
 	req.put = (req.url == '/put');
 	req.get = (req.url == '/get');
 	if (req.method != 'POST' || !(req.put || req.get)) {
-		res.writeHead(405, 'Not Supported', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
-		res.end('');
-		serverlog(req.method + ' to ' + req.url);
-		return;
+		return badRequest(res, req.method + ' to ' + req.url);
 	}
 
 	var postdata = ''
@@ -69,9 +72,11 @@ http.createServer(function(req, res) {
 	});
 	req.on('end', function() {
 
+		if !(postdata)
+			return badRequest(res, req.url + ' missing resource identifier');
 		serverlog('Got ' + req.url + ' request: ' + postdata);
+		
 		var mongorequest = JSON.parse(postdata);
-
 		db.open(function(err, db) {
 
 			if (err) return serverError(res, err);

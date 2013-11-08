@@ -83,12 +83,12 @@ http.createServer(function(req, res) {
 
 			var coll = db.collection(mongocollection);
 			if (req.get) {
-				coll.find(mongorequest).toArray(function(err, docs) {
+				coll.findOne(mongorequest, function(err, doc) {
 					if (err) {
 						serverError(res, err);
 					} else {
-						jsondocs = JSON.stringify(docs);
-						successfulRequest(res, jsondocs, 'Query returned: ' + jsondocs);
+						jsondoc = JSON.stringify(doc);
+						successfulRequest(res, jsondoc, 'Query returned: ' + jsondoc);
 					}
 					db.close();
 				});

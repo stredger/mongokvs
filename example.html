@@ -7,23 +7,23 @@
 	// if nothing is stored we return null
 	//  normally we want to assign the 
 	//  return value to a variable too!
-	var val = store.get('sweetvalue');
+	var val = store.get('sweetkey');
 	console.log(val);
 
 	// we return the value if it exists!
-	store.put('sweetvalue', 'hello!');
-	console.log(store.get('sweetvalue'));
+	store.put('sweetkey', 'hello!');
+	console.log(store.get('sweetkey'));
 
 	// we can put any javascript we want! (well not functions)
 	//  here is an object that has an array inside it,
 	//  with another object as the only element, that has
 	//  a variable v with a value of 5!
-	store.put('othersweetvalue', {a:[{v:5}]});
-	console.log(store.get('othersweetvalue'));
+	store.put('othersweetkey', {a:[{v:5}]});
+	console.log(store.get('othersweetkey'));
 
 	// we need to pass the same value to 'new kvs(...)'
 	//  or else we cant get at the same data!
 	var store2 = new kvs('ilikedogs');
-	console.log(store2.get('sweetvalue')); 
+	console.log(store2.get('sweetkey')); 
 
 </script>

@@ -9,26 +9,21 @@
 	//  return value to a variable too!
 	var val = store.get('sweetvalue');
 	console.log(val);
-/*
+
 	// we return the value if it exists!
 	store.put('sweetvalue', 'hello!');
 	console.log(store.get('sweetvalue'));
 
-	// we can put any javascript we want! here is an object,
-	//  that has an array inside it, with another object
-	//  as the only element!
-	var obj = {}
-	obj.val = 5;
-	store.put('othersweetvalue', {a:[obj]});
+	// we can put any javascript we want! (well not functions)
+	//  here is an object that has an array inside it,
+	//  with another object as the only element, that has
+	//  a variable v with a value of 5!
+	store.put('othersweetvalue', {a:[{v:5}]});
 	console.log(store.get('othersweetvalue'));
-
-	// seriously any javascript! here we are storing a function!
-	store.put('f', function() {console.log('this is crazy!')});
-	console.log(store.get('f'));
 
 	// we need to pass the same value to 'new kvs(...)'
 	//  or else we cant get at the same data!
 	var store2 = new kvs('ilikedogs');
 	console.log(store2.get('sweetvalue')); 
-*/
+
 </script>

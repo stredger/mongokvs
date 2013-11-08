@@ -35,7 +35,7 @@ function serverlog(msg) {
 
 function failedRequest(res, msg) {
 	msg = msg || '';
-	res.writeHead(500, 'Server Error', {'Content-Type': 'application/json'});
+	res.writeHead(500, 'Server Error', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
 	res.end(msg);
 }
 
@@ -46,9 +46,10 @@ function serverError(res, err) {
 
 function successfulRequest(res, data, logmsg) {
 	serverlog(logmsg);
-	res.writeHead(200, 'OK', {'Content-Type': 'application/json'});
+	res.writeHead(200, 'OK', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
 	res.end(data);
 }
+
 
 var db = new MongoDb(mongodb, new MongoServer(mongohost, mongoport), {w:-1});
 http.createServer(function(req, res) {
@@ -56,7 +57,7 @@ http.createServer(function(req, res) {
 	req.put = (req.url == '/put');
 	req.get = (req.url == '/get');
 	if (req.method != 'POST' || !(req.put || req.get)) {
-		res.writeHead(405, 'Not Supported', {'Content-Type': 'application/json'});
+		res.writeHead(405, 'Not Supported', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
 		res.end('');
 		serverlog(req.method + ' to ' + req.url);
 		return;

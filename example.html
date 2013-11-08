@@ -1,0 +1,34 @@
+<script src='kvsclient.js'></script>
+<script>
+	// you must have the same 'name' to access the same data!
+	//  this is how we avoid conflicts. (so use a unique name!!)
+	var store = new kvs('ilikecats');
+
+	// if nothing is stored we return null
+	//  normally we want to assign the 
+	//  return value to a variable too!
+	var val = store.get('sweetvalue');
+	console.log(val);
+/*
+	// we return the value if it exists!
+	store.put('sweetvalue', 'hello!');
+	console.log(store.get('sweetvalue'));
+
+	// we can put any javascript we want! here is an object,
+	//  that has an array inside it, with another object
+	//  as the only element!
+	var obj = {}
+	obj.val = 5;
+	store.put('othersweetvalue', {a:[obj]});
+	console.log(store.get('othersweetvalue'));
+
+	// seriously any javascript! here we are storing a function!
+	store.put('f', function() {console.log('this is crazy!')});
+	console.log(store.get('f'));
+
+	// we need to pass the same value to 'new kvs(...)'
+	//  or else we cant get at the same data!
+	var store2 = new kvs('ilikedogs');
+	console.log(store2.get('sweetvalue')); 
+*/
+</script>

@@ -22,6 +22,7 @@ if (logfile) {
 }
 
 function timestamp() {
+	// these are suuuper messed up...
 	return ts(Date.now()).split('GMT')[0] + '| ';
 }
 
@@ -30,12 +31,12 @@ function serverlog(msg) {
 	if (consolelog)
 		console.log(msg);
 	if (logfile)
-		logfd.write(msg);
+		logfd.write(msg + '\n');
 }
 
 function failedRequest(res, msg) {
 	msg = msg || '';
-	res.writeHead(500, 'Server Error', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
+	res.writeHead(500, 'Server Error', {'access-control-allow-origin':'*', 'Content-Type': 'text/plain'});
 	res.end(msg);
 }
 
@@ -46,19 +47,32 @@ function serverError(res, err) {
 
 function successfulRequest(res, data, logmsg) {
 	serverlog('Success: ' + logmsg);
-	res.writeHead(200, 'OK', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
+	res.writeHead(200, 'OK', {'access-control-allow-origin':'*', 'Content-Type': 'text/plain'});
 	res.end(data);
 }
 
 function badRequest(res, msg) {
 	serverlog('Bad Request: ' + msg);
-	res.writeHead(400, 'Bad Request', {'access-control-allow-origin':'*', 'Content-Type': 'application/json'});
+	res.writeHead(400, 'Bad Request', {'access-control-allow-origin':'*', 'Content-Type': 'text/plain'});
 	res.end('');
 }
 
+function optionsRequest(res) {
+    // dont know if we need all of these headers but whatever
+    var headers = {};
+    headers["Access-Control-Allow-Origin"] = "*";
+    headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS";
+    headers["Access-Control-Allow-Credentials"] = true;
+    headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+    headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
+    res.writeHead(200, headers);
+    res.end();
+}
 
 var db = new MongoDb(mongodb, new MongoServer(mongohost, mongoport), {w:-1});
 http.createServer(function(req, res) {
+
+	if (req.method === 'OPTIONS') return optionsRequest(res);
 
 	req.put = (req.url == '/put');
 	req.get = (req.url == '/get');

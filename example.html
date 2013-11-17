@@ -1,29 +1,48 @@
-<script src='kvsclient.js'></script>
-<script>
-	// you must have the same 'name' to access the same data!
-	//  this is how we avoid conflicts. (so use a unique name!!)
-	var store = new kvs('ilikecats');
 
-	// if nothing is stored we return null
-	//  normally we want to assign the 
-	//  return value to a variable too!
-	var val = store.get('sweetkey');
+<!-- this must be included before js that uses the kvs -->
+<script src='kvsclient.js'></script>
+
+<script>
+	// To use the kvs you need to first create a kvs object.
+	//  To do this you say 'new kvs()' and put a string 
+	//  inside the brackets. ie. new kvs('mystring')
+	// I call the string a data source 'name', you must 
+	//  have the same 'name' to access the same data!
+	var store = new kvs('ilikecats');
+	// We assign the return value of the above to a variable
+	//  here I called it store. Now we use this variable
+	//  to access the kvs! 
+	// To get something stored at a key,
+	//  use the get function. ie. <kvs_object>.get('mykey') 
+	// To store something at a key use the put function.
+	//  ie. <kvs_object>.put('mykey', myvalue)
+	// Just a heads up! This does no encryption and if
+	//  someone just guesses your name and key they can
+	//  get at you password! It is by no means secure,
+	//  so don't use this for anything super secret!
+
+	// if nothing is stored at a key, and we try to get it //  we return null. Normally we want to assign the 
+	//  return value to a variable like this!
+	var val = store.get('stephen');
 	console.log(val);
 
 	// we return the value if it exists!
-	store.put('sweetkey', 'hello!');
-	console.log(store.get('sweetkey'));
+	store.put('k', 'hello!');
+	console.log(store.get('k'));
 
-	// we can put any javascript we want! (well not functions)
+	// we can put any javascript we want! 
+	//  (well, not functions...)
 	//  here is an object that has an array inside it,
 	//  with another object as the only element, that has
-	//  a variable v with a value of 5!
+	//  a variable v in it with a value of 5!
 	store.put('othersweetkey', {a:[{v:5}]});
 	console.log(store.get('othersweetkey'));
 
 	// we need to pass the same value to 'new kvs(...)'
 	//  or else we cant get at the same data!
 	var store2 = new kvs('ilikedogs');
-	console.log(store2.get('sweetkey')); 
+	console.log(store2.get('k')); 
 
 </script>
+
+<h1>Look at the source!</h1>
